@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent (typeof (Controller2D))]
+
 public class Player : MonoBehaviour {
 
 	float moveSpeed = 10;
@@ -42,16 +43,21 @@ public class Player : MonoBehaviour {
     // Link parameters to the Animator
     Animator anim;
 
+    // Initialize controller Script
+    Controller2D controller;
+
+
     public struct PlayerState{
+
 		public bool dashing;
 		public bool facingRight;
-
 		public bool wallJumping;
+
 	}
 
-
-	Controller2D controller;
+	// Initializing program
 	void Start(){
+
 		controller = GetComponent<Controller2D> ();
 		playerState.dashing = false;
 		playerState.facingRight = true;
@@ -65,16 +71,23 @@ public class Player : MonoBehaviour {
 
     }
 
+    // Checking every frame
 	void Update(){
-		handleMovement ();
-		
+
+		handleMovement ();	
+
 	}
 
-	public void handleMovement(){
-		bool wallSliding = false;
 
+	public void handleMovement(){
+
+        bool wallSliding = false;
+
+        //Retrieving input from controller stick
 		Vector2 input = new Vector2 (Input.GetAxis ("LeftJoystickHorizontal"), Input.GetAxis ("LeftJoystickVertical"));
-		if (input.magnitude < DEADZONE_MOVEMENT){
+
+        // Cheking if deadzone is bigger than input for neutralizing movement
+        if (input.magnitude < DEADZONE_MOVEMENT){
 			input = Vector2.zero;
 		}
 
@@ -170,7 +183,6 @@ public class Player : MonoBehaviour {
 				//velocity.x = 3;
 			}
 		}
-
 
 		//velocity.y += gravity * Time.deltaTime;
 		controller.Move (velocity * Time.deltaTime);
