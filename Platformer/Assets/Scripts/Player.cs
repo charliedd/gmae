@@ -36,7 +36,13 @@ public class Player : MonoBehaviour {
 	float accelerationTimeAirborne = .2f;
 	float accelerationTimeGrounded = .1f;
 
-	public struct PlayerState{
+    // Variable for knowing where is the character facing 
+    bool facingRight = true;
+
+    // Link parameters to the Animator
+    Animator anim;
+
+    public struct PlayerState{
 		public bool dashing;
 		public bool facingRight;
 
@@ -54,15 +60,14 @@ public class Player : MonoBehaviour {
 		maxJumpVelocity = Mathf.Abs(gravity * timeToJumpApex);
 		minJumpVelocity = Mathf.Sqrt(2*Mathf.Abs(gravity)* minJumpHeight);
 
-	}
+        // Initialize Animator in code
+        anim = GetComponent<Animator>();
+
+    }
 
 	void Update(){
 		handleMovement ();
 		
-	
-	
-		
-
 	}
 
 	public void handleMovement(){
@@ -114,12 +119,14 @@ public class Player : MonoBehaviour {
 			
 		}
 		
-			
-		if (input.x > 0) {
+		// Flipping the character and animations
+		if (input.x > 0 && !facingRight) {
 			playerState.facingRight = true;
-			} else if (input.x < 0) {
-				playerState.facingRight = false;
-				}
+            Flip();
+		} else if (input.x < 0 && facingRight) {
+			playerState.facingRight = false;
+            Flip();
+		}
 
 		
 		if(playerState.wallJumping){
@@ -135,8 +142,10 @@ public class Player : MonoBehaviour {
 			
 
 		}else{
+            // Adding move speed to the character
 			velocity.x = input.x * moveSpeed;
-		}
+            anim.SetFloat("Speed", Mathf.Abs(velocity.x));
+        }
 		
 
 		velocity.y += gravity * Time.deltaTime;
@@ -166,5 +175,14 @@ public class Player : MonoBehaviour {
 		//velocity.y += gravity * Time.deltaTime;
 		controller.Move (velocity * Time.deltaTime);
 	}
-		
+
+    // Function for flipping the character
+    void Flip()
+    {
+        facingRight = !facingRight;
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+    }
+
 }
